@@ -1,9 +1,8 @@
-require 'trello'
-require 'yaml'
 module Commander
   # Trello Module
   class TrelloConnection
 
+    attr_accessor :board
 
     def initialize
       configure
