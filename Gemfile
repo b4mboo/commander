@@ -1,4 +1,9 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in commander.gemspec
+gem 'rspec'
+gem 'byebug'
+gem 'simplecov'
+gem 'ruby-trello'
+gem 'rubocop'
+
 gemspec
