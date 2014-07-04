@@ -5,7 +5,7 @@ module Commander
     attr_accessor :board
 
     def initialize
-      configure
+      configure_trello
     end
 
     def add_reviewer_to_card(commander, card)
@@ -24,7 +24,7 @@ module Commander
       @board.members.find { |m| m.id == id }
     end
 
-    def configure
+    def configure_trello
       Trello.configure do |config|
         config.developer_public_key = Commander::CONFIG['consumerkey']
         config.member_token = Commander::CONFIG['oauthtoken']

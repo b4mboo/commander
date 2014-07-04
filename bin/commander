@@ -1,0 +1,8 @@
+#!/usr/bin/ruby
+require 'byebug'
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+require 'commander/client'
+require 'commander/version'
+require 'commander/runner'
+client = Commander::Client.new(ARGV.dup)
+client.execute!
