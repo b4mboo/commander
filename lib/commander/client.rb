@@ -16,10 +16,10 @@ module Commander
     def execute!
       if @options[:force]
         puts 'will force a commander to be set'
-        debugger
         Commander::Runner.new(@options).run
       elsif @options[:history]
         puts 'history'
+        Commander::Runner.new.show_hist('More')
       elsif @options[:verbose]
         puts 'verbose output'
       else
@@ -44,8 +44,8 @@ module Commander
         end
 
         @options[:history] = nil
-        opts.on( '-l', '--history FILE', 'Inspect history' ) do |file|
-          @options[:history] = file
+        opts.on( '-l', '--history', 'Inspect history' ) do
+          @options[:history] = true
         end
 
         opts.on( '-h', '--help', 'Display this screen' ) do

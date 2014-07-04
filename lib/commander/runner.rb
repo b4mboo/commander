@@ -11,20 +11,20 @@ module Commander
 
     attr_accessor :options
 
-    def initialize(opts)
-      @options         = opts
-      @options[:force] = opts[:force]
-      @commander = ARGV[1]
+    def initialize(opts = nil)
+      @options         = opts if opts
+      @options[:force] = opts[:force] if opts
+      @options[:history] = opts[:history] if opts
+      @selected_commander = ARGV[1] if ARGV[1]
     end
 
     def run(commander = nil)
-      debugger
-      @commander ||= set_commander
+      @selected_commander ||= select_commander
+      set_commander
     end
 
     def set_commander
       refill_list
-      select_commander
       build_new_hash
       delete_in_old_hash(@selected_commander)
       write_to_file('free', NAMES.to_yaml)
@@ -32,7 +32,7 @@ module Commander
     end
 
     def select_commander
-      @selected_commander = NAMES.keys.sample
+      NAMES.keys.sample
     end
 
     def delete_in_old_hash(commander)
@@ -63,14 +63,18 @@ module Commander
           f.write('')
         end
         puts 'refilled the list[debug]'
-        abort('died')
+        abort('i need to die untill i know how to reset CONSTANTS.. need to')
       end
 
+end
       # def import
       #   @trello = Commander::TrelloConnection.new
       #   @client = Commander::Client.new(ARGV.dup)
       # end
 
-    end
+      def show_hist(commander)
+        NAMES[commander]['times_commander'] if NAMES[commander]
+        NOTFREE[commander]['times_commander'] if NOTFREE[commander]
+      end
   end
 end
