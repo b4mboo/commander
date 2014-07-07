@@ -15,16 +15,15 @@ module Commander
 
     def execute!
       if @options[:force]
-        puts 'will force a commander to be set'
+        puts 'FORCING'
         Commander::Runner.new(@options).run
       elsif @options[:history]
-        puts 'history'
-        Commander::Runner.new.show_hist('More')
+        Commander::Runner.new(@options).show_hist(@options[:history])
       elsif @options[:verbose]
-        puts 'verbose output'
+        puts 'verbose output.. whatever'
       else
-        puts 'i will run with default settings'
-        Commander::Runner.new.run
+        puts 'DEFAULT OPTIONS'
+        Commander::Runner.new(@options).run
       end
     end
 
@@ -34,18 +33,18 @@ module Commander
         opts.banner = "Usage: commander [options] ..."
 
         @options[:verbose] = false
-        opts.on( '-v', '--verbose', 'Output more information' ) do
-          @options[:verbose] = true
+        opts.on( '-v', '--verbose name', 'Output more information <NAME>' ) do |opt|
+          @options[:verbose] = opt
         end
 
         @options[:force] = false
-        opts.on( '-f', '--force', 'Set COMM manually' ) do
-          @options[:force] = true
+        opts.on( '-f', '--force name', 'Set COMM manually <NAME>' ) do |opt|
+          @options[:force] = opt
         end
 
-        @options[:history] = nil
-        opts.on( '-l', '--history', 'Inspect history' ) do
-          @options[:history] = true
+        @options[:history] = false
+        opts.on( '-l', '--history name', 'Inspect history of <NAME>' ) do |opt|
+          @options[:history] = opt
         end
 
         opts.on( '-h', '--help', 'Display this screen' ) do

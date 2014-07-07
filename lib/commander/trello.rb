@@ -1,3 +1,15 @@
+require 'trello'
+
+
+class Trello::Card
+  # Monkeypatching..
+  def assignees
+    @trello = Commander::TrelloConnection.new
+    member_ids.map{|id| @trello.find_member_by_id(id)}
+  end
+end
+
+
 module Commander
   # Trello Module
   class TrelloConnection
@@ -8,7 +20,7 @@ module Commander
       configure_trello
     end
 
-    def add_reviewer_to_card(commander, card)
+    def add_commander_to_card(commander, card)
       card.add_member(commander) if commander
     end
 
@@ -20,8 +32,20 @@ module Commander
       @board.members.find { |m| m.username == username }
     end
 
+    def list_of_assigned_members(card)
+      card.assignees.map(&:username)
+    end
+
+    def remove_member(commander, card) # need to collect assigned members first
+      card.remove_member(commander) if commander
+    end
+
     def find_member_by_id(id)
       @board.members.find { |m| m.id == id }
+    end
+
+    def find_card_by_id(id)
+      @board.cards.find{|c| c.short_id == id.to_i}
     end
 
     def configure_trello
