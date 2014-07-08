@@ -12,18 +12,26 @@ module Commander
       extract_options
     end
 
-
     def execute!
+      subject = Commander::Runner
       if @options[:force]
-        puts 'FORCING'
-        Commander::Runner.new(@options).run
-      elsif @options[:history]
-        Commander::Runner.new(@options).show_hist(@options[:history])
-      elsif @options[:verbose]
-        puts 'verbose output.. whatever'
+        puts 'Forcing ..'
+        subject.new(@options).run
+      elsif @options[:status]
+        puts 'Status output ..'
+        subject.new(@options).show_status(@options[:status])
+      elsif @options[:vacation]
+        puts 'Setting specified user as <on vacation>'
+        subject.new(@options).set_vacation_flag(@options[:vacation][0], @options[:vacation][1])
+      elsif @options[:auto]
+        puts 'Running with default settings..'
+        subject.new(@options)
+      elsif @options[:list]
+        puts 'Display all Members: '
+        subject.new(@options).list_all_members
       else
-        puts 'DEFAULT OPTIONS'
-        Commander::Runner.new(@options).run
+        puts @optparse
+        exit
       end
     end
 
@@ -32,9 +40,9 @@ module Commander
 
         opts.banner = "Usage: commander [options] ..."
 
-        @options[:verbose] = false
-        opts.on( '-v', '--verbose name', 'Output more information <NAME>' ) do |opt|
-          @options[:verbose] = opt
+        @options[:vacation] = false
+        opts.on( '-v', '--vacation name,bool', Array, '<NAME>,true/false(bool) comma is important' ) do |opt|
+          @options[:vacation] = opt
         end
 
         @options[:force] = false
@@ -42,9 +50,19 @@ module Commander
           @options[:force] = opt
         end
 
-        @options[:history] = false
-        opts.on( '-l', '--history name', 'Inspect history of <NAME>' ) do |opt|
-          @options[:history] = opt
+        @options[:status] = false
+        opts.on( '-s', '--status name', 'Inspect history and status of <NAME>' ) do |opt|
+          @options[:status] = opt
+        end
+
+        @options[:auto] = false
+        opts.on( '-a', '--auto', 'Runs with default settings' ) do
+          @options[:auto] = true
+        end
+
+        @options[:list] = false
+        opts.on( '-l', '--list', 'Lists all available Members.' ) do |opt|
+          @options[:list] = opt
         end
 
         opts.on( '-h', '--help', 'Display this screen' ) do
@@ -52,7 +70,7 @@ module Commander
           exit
         end
 
-        opts.on( '', '--version', 'Print programm version' ) do
+        opts.on( '-u', '--version', 'Print programs version' ) do
           puts Commander::VERSION
           exit
         end
