@@ -35,7 +35,14 @@ module Commander
     end
 
     def select_commander
-      Hash[NAMES.sort_by { |k, v| [v[:times_commander], v[:date]] }].keys.first
+      # sorting logic
+      @selected_commander = Hash[NAMES.select { |_, v| !v[:vacation] }].sort_by{ |_, v| v[:times_commander] }
+
+      if @selected_commander[0][1][:times_commander] == @selected_commander[1][1][:times_commander] # couldnt solve it with each ..
+        @selected_commander.sort_by { |_,v| v[:date]}[0][0]
+      else
+        @selected_commander[0][0]
+      end
     end
 
     def delete_in_old_hash(commander)
@@ -47,10 +54,9 @@ module Commander
     end
 
     def count_up
-      @counter = NAMES[@selected_commander]['times_commander'] += 1
-      @content = { @selected_commander => { 'times_commander' => @counter , 'trello_name' =>  NAMES[@selected_commander]['trello_name'], 'date' => Time.now } }
+      @counter = NAMES[@selected_commander][:times_commander] += 1
+      @content = { @selected_commander => { times_commander:  @counter , trello_name: NAMES[@selected_commander]['trello_name'], date: Time.now, vacation: false } }
     end
-
 
     def write_to_file(filename, content)
       File.open("#{File.dirname(__FILE__)}/../../config/#{filename}.yml", 'w') do |f|
@@ -67,7 +73,7 @@ module Commander
     end
 
     def find_member
-      @trello.find_member_by_username(NAMES[@selected_commander]['trello_name'])
+      @trello.find_member_by_username(NAMES[@selected_commander][:trello_name])
     end
 
     def comment_on_card
@@ -96,23 +102,4 @@ module Commander
 end
 
 
-# choose based on time
-
-
-# def refill_list
-#   unless NAMES.any?
-#     FileUtils.cp("#{File.dirname(__FILE__)}/../../config/notfree.yml", "#{File.dirname(__FILE__)}/../../config/free.yml")
-#     File.open("#{File.dirname(__FILE__)}/../../config/notfree.yml", 'w') do |f|
-#       f.write('')
-#     end
-#     puts 'refilled the list[debug]'
-#     abort('i need to die until i know how to reset CONSTANTS.. need to')
-# end
-# end
-
-
-# def actually_write
-#   NOTFREE ? write_to_file('notfree', NOTFREE.merge(@content).to_yaml) : write_to_file('notfree', (@content).to_yaml)
-# end
-
-# NOTFREE = YAML.load_file("#{File.dirname(__FILE__)}/../../config/notfree.yml")
+# set trello due date
