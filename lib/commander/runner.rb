@@ -26,11 +26,11 @@ module Commander
       # import # first
       # find_card # second
       create_vacations(@selected_commander) # before proper vacs
-      proper_vacations #after creating vacs
+      # proper_vacations #after creating vacs
       # comment_on_card
       # delete_assigned_members
       # add_member_to_card
-      build_new_hash(@selected_commander, count_up, proper_vacations || to_boolean('false'), @vacations)
+      @content = build_new_hash(@selected_commander, count_up, proper_vacations, NAMES[@selected_commander][:vacations]) #replace with @vacations [debugging]
       delete_in_old_hash(@selected_commander) # prelast
       write_to_file('free', NAMES.merge(@content).to_yaml) # last
       puts "Chose #{@selected_commander}" # debug
@@ -56,85 +56,23 @@ module Commander
     end
 
     def build_new_hash(commander, counter, vacation_flag, vacation_dates)
-      count_up
-      @content = { commander => { times_commander:  counter , trello_name: NAMES[@selected_commander][:trello_name], date: Time.now, vacation: vacation_flag, tel_name: NAMES[@selected_commander][:tel_name], vacations: vacation_dates } }
-    end
-
-    def count_up
-      NAMES[@selected_commander][:times_commander] += 1
-    end
-
-    def write_to_file(filename, content)
-      File.open("#{File.dirname(__FILE__)}/../../config/#{filename}.yml", 'w') do |f|
-        f.write(content)
-      end
-    end
-
-    def import
-      @trello = Commander::TrelloConnection.new
-    end
-
-    def find_card
-      @card = @trello.find_card_by_id('56') # replace when move to real board
-    end
-
-    def find_member
-      @trello.find_member_by_username(NAMES[@selected_commander][:trello_name])
-    end
-
-    def comment_on_card
-      @comment_string = "#{@selected_commander} is your commanding officer for the next 7 Days."
-      @trello.comment_on_card(@comment_string, @card)
-    end
-
-    def delete_assigned_members
-      begin
-        @trello.list_of_assigned_members(@card).each do |x|
-          @trello.remove_member(@trello.find_member_by_username(x), @card)
-        end
-      rescue
-        puts 'nothing more to delete'
-      end
-    end
-
-    def add_member_to_card
-      @trello.add_commander_to_card(find_member, @card)
-    end
-
-    def show_status(commander)
-      puts "#{commander} was #{NAMES[commander][:times_commander] } times Commanding officer of the week."
-      puts "#{commander} is currently on vacation" if NAMES[commander][:vacation]
-    end
-
-    # Diry workaround..
-    def to_boolean(state)
-      (state == 'true') ? @state = true : @state = false
+      { commander => { times_commander:  counter , trello_name: NAMES[@selected_commander][:trello_name], date: Time.now, vacation: vacation_flag, tel_name: NAMES[@selected_commander][:tel_name], vacations: vacation_dates } }
     end
 
     def set_vacation_flag(commander, state)
       to_boolean(state)
       puts "Set #{commander} to <on/not on vacation>"
-      @vacation = { commander => { times_commander: NAMES[commander][:times_commander], trello_name: NAMES[commander][:trello_name], date: Time.now, vacation: @state, tel_name: NAMES[commander][:tel_name], vacations: NAMES[commander][:vacations] } }
-      write_to_file('free', NAMES.merge(@vacation).to_yaml)
+      @vacation_state = { commander => { times_commander: NAMES[commander][:times_commander], trello_name: NAMES[commander][:trello_name], date: Time.now, vacation: @state, tel_name: NAMES[commander][:tel_name], vacations: NAMES[commander][:vacation] } }
+      write_to_file('free', NAMES.merge(@vacation_state).to_yaml)
     end
 
-    def set_vacation_list(commander, list)
-      puts "Set #{commander} to <on/not on vacation>"
-      @vacation = { commander => { times_commander: NAMES[commander][:times_commander], trello_name: NAMES[commander][:trello_name], date: Time.now, vacation: @state, tel_name: NAMES[commander][:tel_name], vacations: list } }
-      write_to_file('free', NAMES.merge(@vacation).to_yaml)
+    def hash_scaffold(commander = @selected_commander, counter = count_up, vacation_flag = false, vacation_dates = @vacations)
+      { commander => {times_commander: counter, trello_name: NAMES[commander][:trello_name], date: Time.now, vacation: vacation_flag, tel_name: NAMES[commander][:tel_name], vacations: vacation_dates}}
     end
 
-    def list_all_members
-      NAMES.each { |x| puts "-#{x.first}"}
-    end
-
-    def proper_vacations
-      a = @vacations.map {|x| x.split(' - ') }
-      c = a.map {|x| x.map { |b| Date.parse(b) } }
-      until c.empty?
-        set_vacation_flag(@selected_commander, 'true') if (c[0][0]..c[0][1]).cover?(Date.today)
-        c.shift
-      end
+    # deprecated (is it?)
+    def set_vacation_list(commander)
+      write_to_file('free', NAMES.merge(hash_scaffold(commander)).to_yaml)
     end
 
     # Klaus
@@ -169,5 +107,83 @@ module Commander
       end
       tn.close
     end
+
+    def show_status(commander)
+      puts "#{commander} was #{NAMES[commander][:times_commander] } times Commanding officer of the week."
+      puts "#{commander} is currently on vacation" if NAMES[commander][:vacation]
+    end
+
+    def proper_vacations
+      a = NAMES[@selected_commander][:vacations].map {|x| x.split(' - ') } ## replace later with @vacations
+      c = a.map {|x| x.map { |b| Date.parse(b) } }
+      debugger
+      c.each do |x|
+        set_vacation_flag(@selected_commander, 'true') if (x[0]..x[1]).cover?(Date.today)
+      end
+    end
+
+    def delete_assigned_members
+      begin
+        @trello.list_of_assigned_members(@card).each do |x|
+          @trello.remove_member(@trello.find_member_by_username(x), @card)
+        end
+      rescue
+        puts 'nothing more to delete'
+      end
+    end
+
+    def add_member_to_card
+      @trello.add_commander_to_card(find_member, @card)
+    end
+
+    def list_all_members
+      NAMES.each { |x| puts "-#{x.first}"}
+    end
+
+# Diry workaround..
+    def to_boolean(state)
+      (state == 'true') ? @state = true : @state = false
+    end
+
+    def find_card
+      @card = @trello.find_card_by_id('56') # replace when move to real board
+    end
+
+    def find_member
+      @trello.find_member_by_username(NAMES[@selected_commander][:trello_name])
+    end
+
+    def count_up
+      NAMES[@selected_commander][:times_commander] += 1
+    end
+
+    def write_to_file(filename, content)
+      File.open("#{File.dirname(__FILE__)}/../../config/#{filename}.yml", 'w') do |f|
+        f.write(content)
+      end
+    end
+
+    def import
+      @trello = Commander::TrelloConnection.new
+    end
+
+    def comment_on_card
+      @comment_string = "#{@selected_commander} is your commanding officer for the next 7 Days."
+      @trello.comment_on_card(@comment_string, @card)
+    end
   end
+
 end
+
+
+
+# until c.empty? || (c[0][0]..c[0][1]).cover?(Date.today)
+# if (c[0][0]..c[0][1]).cover?(Date.today)
+#   debugger
+#   set_vacation_flag(@selected_commander, 'true')
+# else
+#   debugger
+#   set_vacation_flag(@selected_commander, 'false')
+# end
+# c.shift
+# end
