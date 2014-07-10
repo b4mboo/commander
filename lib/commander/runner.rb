@@ -36,10 +36,17 @@ module Commander
       puts "Chose #{@selected_commander}" # debug
     end
 
+    # How to ignore optionals (change the e.g. last parameter)
+    def hash_scaffold(commander = @selected_commander, counter = count_up, vacation_flag = false, vacation_dates = @vacations)
 
-    def delete_in_old_hash(commander)
-      NAMES.delete(commander)
+      { commander => {times_commander: counter,
+                      trello_name: NAMES[commander][:trello_name],
+                      date: Time.now,
+                      vacation: vacation_flag,
+                      tel_name: NAMES[commander][:tel_name],
+                      vacations: vacation_dates}}
     end
+
 
     def build_new_hash(commander, counter, vacation_flag, vacation_dates)
       { commander => { times_commander:  counter,
@@ -70,7 +77,7 @@ module Commander
 
     def proper_vacations
       a = NAMES[@selected_commander][:vacations].map {|x| x.split(' - ') } ## replace later with @vacations
-      c = a.map {|x| x.map { |b| Date.parse(b) } }
+      c = a.map { |x| x.map { |b| Date.parse(b) } }
       c.each do |x|
         set_vacation_flag(@selected_commander, 'true') if (x[0]..x[1]).cover?(Date.today)
       end
@@ -80,6 +87,10 @@ module Commander
 
 
 
+# 1. Update the File, such as vacation and write to file
+# 2. Select the com
+# 3. do stuff (trello)
+# 4. set the commander in file (with time.now, new count and stuff)
 
 
 
@@ -126,14 +137,7 @@ module Commander
 
 ## DONT TOUCH
 
-    def hash_scaffold(commander = @selected_commander, counter = count_up, vacation_flag = false, vacation_dates = @vacations)
-      { commander => {times_commander: counter,
-                      trello_name: NAMES[commander][:trello_name],
-                      date: Time.now,
-                      vacation: vacation_flag,
-                      tel_name: NAMES[commander][:tel_name],
-                      vacations: vacation_dates}}
-    end
+
 
     # deprecated (is it?)
     def set_vacation_list(commander)
@@ -192,6 +196,9 @@ module Commander
       tn.close
     end
 
+    def delete_in_old_hash(commander)
+      NAMES.delete(commander)
+    end
 
     def delete_assigned_members
       begin
@@ -243,14 +250,3 @@ module Commander
 end
 
 
-
-# until c.empty? || (c[0][0]..c[0][1]).cover?(Date.today)
-# if (c[0][0]..c[0][1]).cover?(Date.today)
-#   debugger
-#   set_vacation_flag(@selected_commander, 'true')
-# else
-#   debugger
-#   set_vacation_flag(@selected_commander, 'false')
-# end
-# c.shift
-# end
