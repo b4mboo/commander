@@ -15,25 +15,33 @@ module Commander
     def initialize(opts = nil)
       @options         = opts
       @options[:force] = opts[:force]
-      @selected_commander = opts[:force] || opts[:status] || opts[:vacation] || (select_commander if opts[:auto])
+      # select commander after update_vacations if autorun
+      @selected_commander = opts[:force] || opts[:status] || opts[:vacation]
     end
 
     def run
       set_commander
     end
 
+    # Should update all vacations
+    def update_vacations
+      NAMES.keys.each do |x|
+        create_vacations(x)
+        proper_vacations(x) unless @vacations.empty? || NAMES[x][:vacations].empty? #can be deleted later
+      end
+    end
+
     def set_commander
-      # import # first
-      # find_card # second
-      create_vacations(@selected_commander) # before proper vacs
-      proper_vacations #after creating vacs
-      # comment_on_card
-      # delete_assigned_members
-      # add_member_to_card
-      # @content = build_new_hash(@selected_commander, count_up, proper_vacations, NAMES[@selected_commander][:vacations]) #replace with @vacations [debugging]
-      delete_in_old_hash(@selected_commander) # prelast
-      # write_to_file('free', NAMES.merge(@content).to_yaml) # last
-      puts "Chose #{@selected_commander}" # debug
+      import
+      find_card
+      update_vacations
+      select_commander if @options[:auto]
+      comment_on_card
+      delete_assigned_members
+      add_member_to_card
+      @forced = build_new_hash(@selected_commander, count_up, false, NAMES[@selected_commander][:vacations]) if @options[:force]#replace with @vacations [debugging]
+      write_to_file('free', NAMES.merge(@forced).to_yaml) if @options[:force]
+      puts "Chose: #{@selected_commander}" # debug
     end
 
     # How to ignore optionals (change the e.g. last parameter)
@@ -62,12 +70,14 @@ module Commander
       puts "Set #{commander} to <on/not on vacation>"
       @vacation_state = { commander => { times_commander: NAMES[commander][:times_commander],
                                          trello_name: NAMES[commander][:trello_name],
-                                         date: Time.now,
+                                         date: NAMES[commander][:date],
                                          vacation: @state,
                                          tel_name: NAMES[commander][:tel_name],
                                          vacations: NAMES[commander][:vacations] } }
 
-      write_to_file('free', NAMES.merge(@vacation_state).to_yaml)
+      @foo = YAML.load_file("#{File.dirname(__FILE__)}/../../config/free.yml")
+      @merged_stuff = @foo.merge(@vacation_state)
+      write_to_file('free', @merged_stuff.to_yaml)
     end
 
     # Diry workaround..
@@ -75,71 +85,15 @@ module Commander
       (state == 'true') ? @state = true : @state = false
     end
 
-    def proper_vacations
-      a = NAMES[@selected_commander][:vacations].map {|x| x.split(' - ') } ## replace later with @vacations
+    def proper_vacations(commander)
+      a = NAMES[commander][:vacations].map {|x| x.split(' - ') } ## replace later with @vacations
       c = a.map { |x| x.map { |b| Date.parse(b) } }
       c.each do |x|
-        set_vacation_flag(@selected_commander, 'true') if (x[0]..x[1]).cover?(Date.today)
+        set_vacation_flag(commander, 'true') if (x[0]..x[1]).cover?(Date.today)
       end
     end
 
-
-
-
-
-# 1. Update the File, such as vacation and write to file
-# 2. Select the com
-# 3. do stuff (trello)
-# 4. set the commander in file (with time.now, new count and stuff)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## DONT TOUCH
-
-
-
-    # deprecated (is it?)
+    # rarely used
     def set_vacation_list(commander)
       write_to_file('free', NAMES.merge(hash_scaffold(commander)).to_yaml)
     end
@@ -147,6 +101,7 @@ module Commander
     def show_status(commander)
       puts "#{commander} was #{NAMES[commander][:times_commander] } times Commanding officer of the week."
       puts "#{commander} is currently on vacation" if NAMES[commander][:vacation]
+      NAMES[commander][:vacations].each { |x| puts x}
     end
 
     def select_commander
@@ -161,8 +116,8 @@ module Commander
       else
         @selected_commander = @selected_commander[0][0]
       end
-      set_commander
     end
+
     # Klaus
     def create_vacations(commander)
       @vacations = []
@@ -194,10 +149,6 @@ module Commander
         end
       end
       tn.close
-    end
-
-    def delete_in_old_hash(commander)
-      NAMES.delete(commander)
     end
 
     def delete_assigned_members

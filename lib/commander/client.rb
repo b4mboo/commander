@@ -25,7 +25,7 @@ module Commander
         subject.new(@options).set_vacation_flag(@options[:vacation][0], @options[:vacation][1])
       elsif @options[:auto]
         puts 'Running with default settings..'
-        subject.new(@options)
+        subject.new(@options).run
       elsif @options[:list]
         puts 'Display all Members: '
         subject.new(@options).list_all_members
