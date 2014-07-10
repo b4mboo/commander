@@ -1,5 +1,4 @@
 require 'yaml'
-require 'fileutils'
 require 'commander/trello'
 require 'trello'
 require 'net/telnet'
@@ -13,13 +12,14 @@ module Commander
     cattr_accessor :users
     @@users = YAML.load_file("#{File.dirname(__FILE__)}/../../config/free.yml")
 
+    # Init
     def initialize(opts = nil)
       @options         = opts
       @options[:force] = opts[:force]
-      # select commander after update_vacations if autorun
       @selected_commander = opts[:force] || opts[:status] || opts[:vacation]
     end
 
+    # Call for options
     def run
       set_commander
     end
@@ -41,7 +41,7 @@ module Commander
     def update_vacations
       @@users.keys.each do |name|
         create_vacations(name)
-        proper_vacations(name) unless @vacations.empty?
+        evaluate_vacations(name) unless @vacations.empty?
         @@users[name][:vacations] = @vacations
       end
       write_to_file('free', @@users.to_yaml)
@@ -60,11 +60,11 @@ module Commander
     end
 
     # Check for timespans
-    def proper_vacations(commander)
-      a = @vacations.map {|x| x.split(' - ') }
-      c = a.map { |x| x.map { |b| Date.parse(b) } }
-      c.each do |x|
-        set_vacation_flag(commander, 'true') if (x[0]..x[1]).cover?(Date.today)
+    def evaluate_vacations(commander)
+      split = @vacations.map {|x| x.split(' - ') }
+      parsed = split.map { |x| x.map { |b| Date.parse(b) } }
+      parsed.each do |check|
+        set_vacation_flag(commander, 'true') if (check[0]..check[1]).cover?(Date.today)
       end
     end
 
@@ -101,8 +101,8 @@ module Commander
       tn.close
     end
 
+    # Sorting logic
     def select_commander
-      # sorting logic
       @selected_commander = Hash[@@users.select { |_, v| !v[:vacation] }].sort_by{ |_, v| v[:times_commander] }
       if @selected_commander.count > 1
         if @selected_commander[0][1][:times_commander] == @selected_commander[1][1][:times_commander]
@@ -119,12 +119,14 @@ module Commander
       write_to_file('free', @@users.to_yaml)
     end
 
+    # Prints out the status
     def show_status(commander)
       puts "#{commander} was #{@@users[commander][:times_commander] } times Commanding officer of the week."
       puts "#{commander} is currently on vacation" if @@users[commander][:vacation]
       @@users[commander][:vacations].each { |x| puts x}
     end
 
+    # Manipulates the yaml on options[:force]
     def forced
       @@users[@selected_commander][:vacation] = false
       @@users[@selected_commander][:date] = Time.now
@@ -133,6 +135,7 @@ module Commander
       puts 'i were forced'
     end
 
+    # Delete assigned commander from Trello Card
     def delete_assigned_members
       begin
         @trello.list_of_assigned_members(@card).each do |x|
@@ -143,36 +146,44 @@ module Commander
       end
     end
 
+    # Adds commander to Trello Card
     def add_member_to_card
       @trello.add_commander_to_card(find_member, @card)
     end
 
+    # List all available Users
     def list_all_members
       @@users.each { |x| puts "-#{x.first}"}
     end
 
+    # Finds the Commander Card on Trello
     def find_card
       @card = @trello.find_card_by_id('56') # replace when move to real board
     end
 
+    # Finds the member on Trello
     def find_member
       @trello.find_member_by_username(@@users[@selected_commander][:trello_name])
     end
 
+    # Increments the counter
     def count_up
       @@users[@selected_commander][:times_commander] += 1
     end
 
+    # Writes to yaml
     def write_to_file(filename, content)
       File.open("#{File.dirname(__FILE__)}/../../config/#{filename}.yml", 'w') do |f|
         f.write(content)
       end
     end
 
+    # Imports TrelloConnection
     def import
       @trello = Commander::TrelloConnection.new
     end
 
+    # Comments on Trello Card
     def comment_on_card
       @comment_string = "@#{@@users[@selected_commander][:trello_name]} is your commanding officer for the next 7 Days."
       @trello.comment_on_card(@comment_string, @card)

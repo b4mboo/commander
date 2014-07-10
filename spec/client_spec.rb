@@ -13,8 +13,6 @@ describe Commander::Client do
       expect($stdout).to receive(:print).with('Forcing...')
       cli.execute!
     end
-    let(:options) { 'vacation' => false, 'force' => false }
-    let(:cli) { subject.new(@options)(%w{-v vacation,usw}) }
 
     it 'should print verbose output' do
       expect($stdout).to receive(:print).with('Setting specified user as <on vacation>')
