@@ -113,6 +113,7 @@ module Commander
       else
         @selected_commander = @selected_commander[0][0]
       end
+      # will be refactored => duplication
       @@users[@selected_commander][:vacation] = false
       @@users[@selected_commander][:times_commander] = count_up
       @@users[@selected_commander][:date] = Time.now
