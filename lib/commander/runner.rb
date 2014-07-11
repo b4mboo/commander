@@ -1,22 +1,22 @@
 require 'yaml'
 require 'commander/trello'
+require 'commander/vacations'
+require 'commander/helpers'
 require 'trello'
-require 'net/telnet'
 module Commander
 
   CONFIG = YAML.load_file("#{File.dirname(__FILE__)}/../../config/.trello.yml")
 
   class Runner
 
-    attr_accessor :options, :board, :selected_commander
-    cattr_accessor :users
-    @@users = YAML.load_file("#{File.dirname(__FILE__)}/../../config/free.yml")
+    attr_accessor :options, :board, :selected_commander, :users
 
     # Init
     def initialize(opts = nil)
       @options         = opts
       @options[:force] = opts[:force]
       @selected_commander = opts[:force] || opts[:status] || opts[:vacation]
+      @users = YAML.load_file("#{File.dirname(__FILE__)}/../../config/free.yml")
     end
 
     # Call for options
@@ -39,71 +39,37 @@ module Commander
 
     # Should update all vacations
     def update_vacations
-      @@users.keys.each do |name|
-        create_vacations(name)
-        evaluate_vacations(name) unless @vacations.empty?
-        @@users[name][:vacations] = @vacations
+      self.users.keys.each do |name|
+        @vacations = Commander::Vacations.find_vacations(self.users[name][:tel_name]) #tel_name
+        evaluate_vacations(name)
+        @users[name][:vacations] = @vacations
       end
-      write_to_file('free', @@users.to_yaml)
+      write_to_file('free', @users.to_yaml)
     end
 
     # Sets :vacation true if vacation
     def set_vacation_flag(commander, state)
-      to_boolean(state)
+      Commander::Helpers.to_boolean(state)
       puts "#{commander} is on vacation"
-      @@users[commander][:vacation] = true
-    end
-
-    # no .to_bool
-    def to_boolean(state)
-      (state == 'true') ? @state = true : @state = false
+      @users[commander][:vacation] = true
     end
 
     # Check for timespans
     def evaluate_vacations(commander)
-      split = @vacations.map {|x| x.split(' - ') }
-      parsed = split.map { |x| x.map { |b| Date.parse(b) } }
-      parsed.each do |check|
+      parse_vacations.each do |check|
         set_vacation_flag(commander, 'true') if (check[0]..check[1]).cover?(Date.today)
       end
     end
 
-    # Klaus, refactor later
-    def create_vacations(commander)
-      @vacations = []
-      tn = Net::Telnet.new('Host' => 'present.suse.de', 'Port' => 9874, 'Binmode' => false)
-      collect = false
-      tn.cmd(@@users[commander][:tel_name]) do |data|
-        data.split("\n").each do |l|
-          collect = true if l =~ /^Absence/
-          next unless collect
-          if l[0,1] == "-"
-            collect = false
-            next
-          end
-          dates = []
-          l.split(" ").each do |date|
-            unless date =~ /2014/
-              next
-            end
-            dates.push(date)
-          end
-          case dates.size
-            when 1
-              @vacations.push("#{dates[0]}")
-            when 2
-              @vacations.push("#{dates[0]} - #{dates[1]}")
-            else
-              STDERR.puts "#{dates.size} dates for '(#{@@users[commander][:tel_name]})' #{l}"
-          end
-        end
-      end
-      tn.close
+    # Parsing vacation to computable format
+    def parse_vacations
+      split = @vacations.map {|x| x.split(' - ') }
+      split.map { |x| x.map { |b| Date.parse(b) } }
     end
 
     # Sorting logic
     def select_commander
-      @selected_commander = Hash[@@users.select { |_, v| !v[:vacation] }].sort_by{ |_, v| v[:times_commander] }
+      @selected_commander = Hash[@users.select { |_, v| !v[:vacation] }].sort_by{ |_, v| v[:times_commander] }
       if @selected_commander.count > 1
         if @selected_commander[0][1][:times_commander] == @selected_commander[1][1][:times_commander]
           @selected_commander = @selected_commander.sort_by { |_,v| v[:date] }[0][0]
@@ -113,26 +79,27 @@ module Commander
       else
         @selected_commander = @selected_commander[0][0]
       end
-      # will be refactored => duplication
-      @@users[@selected_commander][:vacation] = false
-      @@users[@selected_commander][:times_commander] = count_up
-      @@users[@selected_commander][:date] = Time.now
-      write_to_file('free', @@users.to_yaml)
+      write_attributes
     end
 
     # Prints out the status
     def show_status(commander)
-      puts "#{commander} was #{@@users[commander][:times_commander] } times Commanding officer of the week."
-      puts "#{commander} is currently on vacation" if @@users[commander][:vacation]
-      @@users[commander][:vacations].each { |x| puts x}
+      puts "#{commander} was #{@users[commander][:times_commander] } times Commanding officer of the week."
+      puts "#{commander} is currently on vacation" if @users[commander][:vacation]
+      @users[commander][:vacations].each { |x| puts x}
     end
 
-    # Manipulates the yaml on options[:force]
+    # And writes
+    def write_attributes
+      users[@selected_commander][:vacation] = false
+      users[@selected_commander][:times_commander] = count_up
+      users[@selected_commander][:date] = Time.now
+      write_to_file('free', @users.to_yaml)
+    end
+
+    # Manipulates yaml on options[:force]
     def forced
-      @@users[@selected_commander][:vacation] = false
-      @@users[@selected_commander][:date] = Time.now
-      @@users[@selected_commander][:times_commander] = count_up
-      write_to_file('free', @@users.to_yaml)
+      write_attributes
       puts 'i were forced'
     end
 
@@ -154,7 +121,7 @@ module Commander
 
     # List all available Users
     def list_all_members
-      @@users.each { |x| puts "-#{x.first}"}
+      @users.each { |x| puts "-#{x.first}"}
     end
 
     # Finds the Commander Card on Trello
@@ -164,12 +131,12 @@ module Commander
 
     # Finds the member on Trello
     def find_member
-      @trello.find_member_by_username(@@users[@selected_commander][:trello_name])
+      @trello.find_member_by_username(@users[@selected_commander][:trello_name])
     end
 
     # Increments the counter
     def count_up
-      @@users[@selected_commander][:times_commander] += 1
+      @users[@selected_commander][:times_commander] += 1
     end
 
     # Writes to yaml
@@ -186,7 +153,7 @@ module Commander
 
     # Comments on Trello Card
     def comment_on_card
-      @comment_string = "@#{@@users[@selected_commander][:trello_name]} is your commanding officer for the next 7 Days."
+      @comment_string = "@#{@users[@selected_commander][:trello_name]} is your commanding officer for the next 7 Days."
       @trello.comment_on_card(@comment_string, @card)
     end
   end
