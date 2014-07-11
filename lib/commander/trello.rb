@@ -36,8 +36,8 @@ module Commander
       card.assignees.map(&:username)
     end
 
-    def remove_member(commander, card) # need to collect assigned members first
-      card.remove_member(commander) if commander
+    def remove_member_from_card(commander, card)
+      card.remove_member_from_card(commander) if commander
     end
 
     def find_member_by_id(id)

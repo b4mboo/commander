@@ -12,11 +12,16 @@ module Commander
     attr_accessor :options, :board, :selected_commander, :users
 
     # Init
-    def initialize(opts = nil)
+    def initialize(opts = {})
       @options         = opts
       @options[:force] = opts[:force]
       @selected_commander = opts[:force] || opts[:status] || opts[:vacation]
       @users = YAML.load_file("#{File.dirname(__FILE__)}/../../config/free.yml")
+      # @skip_selection = opts[:force] || opts[:status] || opts[:vacation]
+      # [:force, :status, :vacation].map{|k| opts.has_key? k}.any?
+      # @skip_selection = opts[:auto]
+      # @user = opts[:user]
+      # @cmd = opts[:user]
     end
 
     # Call for options
@@ -37,7 +42,7 @@ module Commander
       puts "Chose: #{@selected_commander}" # debug
     end
 
-    # Should update all vacations
+    # Updates all vacations
     def update_vacations
       self.users.keys.each do |name|
         @vacations = Commander::Vacations.find_vacations(self.users[name][:tel_name]) #tel_name
@@ -107,7 +112,7 @@ module Commander
     def delete_assigned_members
       begin
         @trello.list_of_assigned_members(@card).each do |x|
-          @trello.remove_member(@trello.find_member_by_username(x), @card)
+          @trello.remove_member_from_card(@trello.find_member_by_username(x), @card)
         end
       rescue
         puts 'Noone assigned.'
