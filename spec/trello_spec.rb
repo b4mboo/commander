@@ -86,4 +86,49 @@ describe Commander::TrelloConnection do
     end
   end
 
+  describe '#remove_member_to_card' do
+    let ( :trello_connection ) { subject.new }
+
+    before do
+      allow_any_instance_of(subject).to receive(:configure_trello).and_return true
+    end
+
+    it 'removes a member from trello card' do
+      card = double('card')
+      allow(card).to receive(:remove_member_from_card).and_return true
+      expect(trello_connection.remove_member_from_card('asd', card)).to eq true
+    end
+  end
+
+  describe '#list_of_assigned_members' do
+    let ( :trello_connection ) { subject.new }
+
+    before do
+      allow_any_instance_of(subject).to receive(:configure_trello).and_return true
+    end
+
+    it 'list all the assigned members of the specified card ' do
+      card = double('card')
+      expect(card).to receive_message_chain(:assignees, :map)
+      trello_connection.list_of_assigned_members(card)
+    end
+  end
+
+  describe '#find_member_by_id(id)' do
+    let( :trello_connection ) { subject.new }
+
+    before do
+      allow_any_instance_of(subject).to receive(:configure_trello).and_return true
+      allow(subject).to receive(:find_card_by_id).and_return :id
+    end
+
+    it "finds the right card based on the trello id" do
+      board = double('board')
+      trello_connection.board = board
+      expect(board).to receive_message_chain(:cards, :find)
+      trello_connection.send(:find_card_by_id, 42)
+      #privates with send
+    end
+  end
+
 end
