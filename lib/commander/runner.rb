@@ -3,6 +3,7 @@ require 'commander/trello'
 require 'commander/vacations'
 require 'commander/helpers'
 require 'trello'
+require "debugger"
 module Commander
 
   CONFIG = YAML.load_file("#{File.dirname(__FILE__)}/../../config/.trello.yml")
@@ -68,7 +69,7 @@ module Commander
 
     # Parsing vacation to computable format
     def parse_vacations
-      split = @vacations.map {|x| x.split(' - ') }
+      split = @vacations.map { |x| x.split(' - ') }
       split.map { |x| x.map { |b| Date.parse(b) } }
     end
 
@@ -136,12 +137,12 @@ module Commander
 
     # Finds the member on Trello
     def find_member
-      @trello.find_member_by_username(@users[@selected_commander][:trello_name])
+      @trello.find_member_by_username(users[@selected_commander][:trello_name])
     end
 
     # Increments the counter
     def count_up
-      @users[@selected_commander][:times_commander] += 1
+      users[@selected_commander][:times_commander] += 1
     end
 
     # Writes to yaml
