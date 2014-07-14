@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'fileutils'
+
 describe Commander::Runner do
 
   let( :vacations) { File.read(File.join(File.dirname(__FILE__), 'fixtures/vacations.txt')) }
@@ -54,7 +55,7 @@ describe Commander::Runner do
   end
 
   describe '#set_commander' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'name', :status=>false, :auto=>false, :list=>false}) }
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>false}) }
 
     it 'sets the commander with help of methods' do
       expect(subject).to receive(:import)
@@ -71,7 +72,7 @@ describe Commander::Runner do
 
   describe '#update_vacations' do
 
-    subject { Commander::Runner.new({:vacation=>false, :force=>'name', :status=>false, :auto=>false, :list=>false}) }
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>false}) }
 
     let( :vacations) { File.read(File.join(File.dirname(__FILE__), 'fixtures/vacations.txt')) }
 
@@ -90,7 +91,7 @@ describe Commander::Runner do
   end
 
   describe '#set_vacation_flag' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'name', :status=>false, :auto=>false, :list=>false}) }
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>false}) }
 
     it 'sets a vacation flag if on vacation' do
       allow(Commander::Helpers).to receive(:to_boolean).and_return 'true'
@@ -99,17 +100,21 @@ describe Commander::Runner do
   end
 
   describe '#evaulate_vacations' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'name', :status=>false, :auto=>false, :list=>false}) }
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>false}) }
 
     it 'evaluates vacation times' do
-      expect(subject).to receive(:parse_vacation).to_return Array
+      # trello = double('trello')
+      # subject.instance_variable_set(:@trello, trello)
+      # stub parse_vacation
+      allow(subject).to receive(:parse_vacations).and_return :parsed_vacations
+      expect(:parsed_vacations).to receive(:each).and_return 'asd'
       subject.evaluate_vacations(subject.users.first.first)
     end
 
   end
 
   describe '#show_status' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'name', :status=>false, :auto=>false, :list=>true}) }
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
 
     it 'prints out the status' do
       expect($stdout).to receive(:puts).with("#{subject.users.first.first} was 3 times Commanding officer of the week.")
@@ -118,10 +123,10 @@ describe Commander::Runner do
     end
 
   end
-  
+
   describe '#wirte_attributes' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'name', :status=>false, :auto=>false, :list=>true}) }
-    
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
+
     it 'writes standard attributes' do
       instance_variable_set(:@selected_commander, 'test')
       instance_variable_set(:@users, 'test')
@@ -134,7 +139,7 @@ describe Commander::Runner do
   end
 
   describe '#forced' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'name', :status=>false, :auto=>false, :list=>true}) }
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
 
     it 'calls write_attributes if options[:forced]' do
       expect(subject).to receive(:write_attributes)
@@ -143,47 +148,115 @@ describe Commander::Runner do
   end
 
   describe '#delete_assigned_members' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'name', :status=>false, :auto=>false, :list=>true}) }
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
 
     it 'delete all remaining members on the trello card ' do
       trello = double('trello')
+      subject.instance_variable_set(:@trello, trello)
       expect(trello).to receive_message_chain(:list_of_assigned_members, :each)
+      # how to test in each
       subject.delete_assigned_members
     end
   end
 
-  describe '#add_member_to_card' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'name', :status=>false, :auto=>false, :list=>true}) }
 
-    it 'adds a member to the specified trello card ' do
-      @trello = double('trello')
-      @card = double('card')
-      expect(@trello).to receive(:add_commander_to_card).with(:find_member, @card)
-      subject.add_member_to_card
-      debugger
-    end
-
-  end
 
   describe '#list_all_members' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'name', :status=>false, :auto=>false, :list=>true}) }
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
 
     it 'lists all available members' do
-      #??
+      # user = subject.users.first.first
+      expect(STDOUT).to receive(:puts).with(String)
+      expect(STDOUT).to receive(:puts).with(String)
+      expect(STDOUT).to receive(:puts).with(String)
+      expect(STDOUT).to receive(:puts).with(String)
+      expect(STDOUT).to receive(:puts).with(String)
+      expect(STDOUT).to receive(:puts).with(String)
+      # how to test 6 times?
+      subject.list_all_members
     end
   end
 
   describe '#find_card' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'name', :status=>false, :auto=>false, :list=>true}) }
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
 
     it 'find the card from trello board' do
       card = double('card')
-      expect(subject).to receive(:find_card_by_id).with('56').to eq card
+      trello = double('trello')
+      subject.instance_variable_set(:@trello, trello)
+      allow(subject).to receive(:find_card_by_id).with('56').and_return card
+      expect(trello).to receive(:find_card_by_id).with('56')
+      subject.find_card
     end
   end
 
+  describe '#count_up' do
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
 
-  #     Failure/Error: subject.add_member_to_card
-  #     NoMethodError:
-  #     undefined method `[]' for nil:NilClass
+    it 'increments the user counter' do
+      instance_variable_set(:@selected_commander, 'Joshua')
+      count = subject.users[@selected_commander][:times_commander]
+      expect(subject.count_up).to eq (count + 1)
+    end
+  end
+
+  describe '#add_member_to_card' do
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
+
+    it 'adds a member to the specified trello card ' do
+      trello = double('trello')
+      card =  double('card')
+      member = double('member')
+      subject.instance_variable_set(:@trello, trello)
+      subject.instance_variable_set(:@card, card)
+      expect(subject).to receive(:find_member).and_return member
+      expect(trello).to receive(:add_commander_to_card).with(member, card)
+      subject.add_member_to_card
+    end
+  end
+
+  describe '#find_member' do
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
+
+    it 'finds the member based on its trello username' do
+      trello = double('trello')
+      subject.instance_variable_set(:@trello, trello)
+      expect(trello).to receive(:find_member_by_username)
+      subject.find_member
+    end
+  end
+
+  describe '#find_member' do
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
+
+    it 'writes all the stuff to the yaml file' do
+
+      # dunno.. google
+    end
+  end
+
+  describe '#comment_on_card' do
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
+
+    it 'comments on the card' do
+      trello = double('trello')
+      card = double('card')
+      comment_string = '@jschmid is your commanding officer for the next 7 Days.'
+      subject.instance_variable_set(:@trello, trello)
+      subject.instance_variable_set(:@comment_string, comment_string)
+      subject.instance_variable_set(:@card, card)
+      expect(trello).to receive(:comment_on_card).with(comment_string, card)
+      subject.comment_on_card
+    end
+  end
+
+  describe '#select_commander' do
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
+
+    it 'selects a commander based on date, count and presence' do
+      subject.instance_variable_get(:@selected_commander)
+      subject.select_commander
+    end
+  end
+
 end

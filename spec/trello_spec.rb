@@ -122,12 +122,11 @@ describe Commander::TrelloConnection do
       allow(subject).to receive(:find_card_by_id).and_return :id
     end
 
-    it "finds the right card based on the trello id" do
+    it 'finds the right card based on the trello id' do
       board = double('board')
       trello_connection.board = board
       expect(board).to receive_message_chain(:cards, :find)
       trello_connection.send(:find_card_by_id, 42)
-      #privates with send
     end
   end
 
