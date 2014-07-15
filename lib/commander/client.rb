@@ -13,22 +13,22 @@ module Commander
     end
 
     def execute!
-      subject = Commander::Runner
+      runner = Commander::Runner
       if @options[:force]
         puts 'Forcing ..'
-        subject.new(@options).run
+        runner.new(@options).run
       elsif @options[:status]
         puts 'Status output ..'
-        subject.new(@options).show_status(@options[:status])
+        runner.new(@options).show_status(@options[:status])
       elsif @options[:vacation]
         puts 'Setting specified user as <on vacation>'
-        subject.new(@options).set_vacation_flag(@options[:vacation][0], @options[:vacation][1])
+        runner.new(@options).set_vacation_flag(@options[:vacation][0], @options[:vacation][1])
       elsif @options[:auto]
         puts 'Running with default settings..'
-        subject.new(@options).run
+        runner.new(@options).run
       elsif @options[:list]
         puts 'Display all Members: '
-        subject.new(@options).list_all_members
+        runner.new(@options).list_all_members
       else
         puts @optparse
         exit
@@ -79,4 +79,3 @@ module Commander
     end
   end
 end
-
