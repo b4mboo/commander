@@ -1,0 +1,62 @@
+---
+Thomas:
+  :times_commander: 8
+  :trello_name: thomasschmidt
+  :date: 2014-07-15 11:21:14.253148685 +02:00
+  :vacation: false
+  :tel_name: Thomas Schmidt
+  :vacations:
+  - 2014-07-25 - 2014-07-27
+  - 2014-08-01 - 2014-08-03
+  - 2014-08-16 - 2014-08-31
+  - 2014-10-03 - 2014-10-05
+  - 2014-12-24 - 2014-12-28
+Vlad:
+  :times_commander: 8
+  :trello_name: vlewin
+  :date: 2014-07-15 11:17:39.017195822 +02:00
+  :vacation: false
+  :tel_name: Vladislav Lewin
+  :vacations:
+  - 2014-08-23 - 2014-09-14
+  - 2014-10-03 - 2014-10-05
+  - 2014-12-24 - 2014-12-28
+Dominik:
+  :times_commander: 0
+  :trello_name: b4mboo
+  :date: 2014-07-10 13:23:19.092693332 +02:00
+  :vacation: true
+  :tel_name: Dominik Bamberger
+  :vacations:
+  - 2014-07-08 - 2014-07-13
+  - 2014-10-03 - 2014-10-05
+  - 2014-12-24 - 2014-12-28
+Joshua:
+  :times_commander: 8
+  :trello_name: jschmid
+  :date: 2014-07-15 10:52:07.543498166 +02:00
+  :vacation: false
+  :tel_name: Joshua Schmid
+  :vacations:
+  - 2014-07-19 - 2014-07-23
+  - 2014-07-26 - 2014-07-28
+  - 2014-10-03 - 2014-10-05
+  - 2014-12-24 - 2014-12-28
+Artem:
+  :times_commander: 8
+  :trello_name: artemchernikov
+  :date: 2014-07-15 11:11:38.472866376 +02:00
+  :vacation: false
+  :tel_name: Artem Chernikov
+  :vacations:
+  - 2014-10-03 - 2014-10-05
+  - 2014-12-24 - 2014-12-28
+Will:
+  :times_commander: 8
+  :trello_name: wstephenson
+  :date: 2014-07-15 10:52:24.332737518 +02:00
+  :vacation: false
+  :tel_name: Will Stephenson
+  :vacations:
+  - 2014-10-03 - 2014-10-05
+  - 2014-12-24 - 2014-12-28
