@@ -61,6 +61,15 @@ describe Commander::Client do
       end
     end
 
+    context 'with no options' do
+      let(:cli) { subject.new(%w{}) }
+
+      it 'should exit cleanly when no arg is given' do
+        expect_any_instance_of(subject).to receive(:exit)
+        cli.execute!
+      end
+    end
+
   end
 
 
@@ -90,17 +99,19 @@ describe Commander::Client do
       expect(cli.options[:auto]).to eq true
     end
 
+    it 'sets help options' do
+      argv = %w{-h}
+      expect_any_instance_of(subject).to receive(:puts)
+      expect_any_instance_of(subject).to receive(:exit)
+      subject.new(argv)
+    end
 
-    # it 'sets help options' do
-    #   cli = subject.new(['-h'])
-    #   expect(cli.options[:auto]).to eq true
-    # end
-
-    # it 'gets version options' do
-    #   argv = %w{-u}
-    #   cli = subject.new(argv)
-    #   expect(cli).to eq options
-    # end
+    it 'gets version options' do
+      argv = %w{-u}
+      expect_any_instance_of(subject).to receive(:puts).with(Commander::VERSION)
+      expect_any_instance_of(subject).to receive(:exit)
+      subject.new(argv)
+    end
 
   end
 
