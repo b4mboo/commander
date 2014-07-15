@@ -86,20 +86,6 @@ describe Commander::TrelloConnection do
     end
   end
 
-  describe '#remove_member_to_card' do
-    let ( :trello_connection ) { subject.new }
-
-    before do
-      allow_any_instance_of(subject).to receive(:configure_trello).and_return true
-    end
-
-    it 'removes a member from trello card' do
-      card = double('card')
-      allow(card).to receive(:remove_member_from_card).and_return true
-      expect(trello_connection.remove_member_from_card('asd', card)).to eq true
-    end
-  end
-
   describe '#list_of_assigned_members' do
     let ( :trello_connection ) { subject.new }
 

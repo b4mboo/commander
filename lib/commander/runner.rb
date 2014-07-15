@@ -17,11 +17,6 @@ module Commander
       @options[:force] = opts[:force]
       @selected_commander = opts[:force] || opts[:status] || opts[:vacation]
       @users = YAML.load_file("#{File.dirname(__FILE__)}/../../config/members.yml")
-      # @skip_selection = opts[:force] || opts[:status] || opts[:vacation]
-      # [:force, :status, :vacation].map{|k| opts.has_key? k}.any?
-      # @skip_selection = opts[:auto]
-      # @user = opts[:user]
-      # @cmd = opts[:user]
     end
 
     # Call for options
@@ -105,18 +100,11 @@ module Commander
     # Manipulates yaml on options[:force]
     def forced
       write_attributes
-      puts 'i were forced'
     end
 
     # Delete assigned commander from Trello Card
     def delete_assigned_members
-      begin
-        @trello.list_of_assigned_members(@card).each do |x|
-          @trello.remove_member_from_card(@trello.find_member_by_username(x), @card)
-        end
-      rescue
-        puts 'Noone assigned.'
-      end
+      @card.members.each{|member| @card.remove_member member}
     end
 
     # Adds commander to Trello Card

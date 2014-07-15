@@ -36,10 +36,6 @@ module Commander
       card.assignees.map(&:username)
     end
 
-    def remove_member_from_card(commander, card)
-      card.remove_member_from_card(commander) if commander
-    end
-
     def find_member_by_id(id)
       @board.members.find { |m| m.id == id }
     end
