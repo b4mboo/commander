@@ -114,7 +114,7 @@ describe Commander::Runner do
   end
 
   describe '#show_status' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
+    subject { Commander::Runner.new({:vacation=>false, :force=>false, :status=>true, :auto=>false, :list=>false}) }
 
     it 'prints out the status' do
       expect($stdout).to receive(:puts).with("#{subject.users.first.first} was 3 times Commanding officer of the week.")
@@ -226,7 +226,7 @@ describe Commander::Runner do
     end
   end
 
-  describe '#find_member' do
+  describe '#wirte_to_file' do
     subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
 
     it 'writes all the stuff to the yaml file' do
@@ -258,5 +258,14 @@ describe Commander::Runner do
       subject.select_commander
     end
   end
+
+  describe '#import' do
+    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
+
+    it 'imports trello config' do
+
+    end
+  end
+
 
 end

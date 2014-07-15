@@ -3,56 +3,96 @@ require 'spec_helper'
 
 describe Commander::Client do
 
+  subject { Commander::Client }
+
+  before do
+    allow_any_instance_of(Commander::Runner).to receive(:set_commander) { true }
+  end
+
   describe '#execute' do
+    context 'with auto options' do
+      let(:cli) { subject.new(%w{-a}) }
 
-    subject { Commander::Client }
-    let(:cli) { subject.new(%w{-a}) }
-
-    it 'should run with default settings' do
-      expect(cli).to receive(:run).and_return true
-      cli.execute!
-      # stub
+      it 'should run with default settings' do
+        expect(Commander::Runner).to receive(:new).with(cli.options).and_return Commander::Runner.new(cli.options)
+        expect_any_instance_of(Commander::Runner).to receive(:run)
+        cli.execute!
+      end
     end
+
+    context 'with force options' do
+      let(:cli) { subject.new(%w{-f, name}) }
+
+      it 'should run with force settings' do
+        expect(Commander::Runner).to receive(:new).with(cli.options).and_return Commander::Runner.new(cli.options)
+        expect_any_instance_of(Commander::Runner).to receive(:run)
+        cli.execute!
+      end
+    end
+
+
+    context 'with list options' do
+      let(:cli) { subject.new(%w{-l}) }
+
+      it 'should run with list settings' do
+        expect(Commander::Runner).to receive(:new).with(cli.options).and_return Commander::Runner.new(cli.options)
+        expect_any_instance_of(Commander::Runner).to receive(:list_all_members)
+        cli.execute!
+      end
+    end
+
+    context 'with status options' do
+      let(:cli) { subject.new(%w{-s, name}) }
+
+      it 'should run with force settings' do
+        expect(Commander::Runner).to receive(:new).with(cli.options).and_return Commander::Runner.new(cli.options)
+        expect_any_instance_of(Commander::Runner).to receive(:show_status)
+        cli.execute!
+      end
+    end
+
+    context 'with vacation options' do
+      let(:cli) { subject.new(%w{-v, name, true}) }
+
+      it 'should run with vacation settings' do
+        expect(Commander::Runner).to receive(:new).with(cli.options).and_return Commander::Runner.new(cli.options)
+        expect_any_instance_of(Commander::Runner).to receive(:set_vacation_flag)
+        cli.execute!
+      end
+    end
+
   end
 
 
   describe '?extract_options' do
-    let(:cli) { subject.new(%w{-a}) }
-
     it 'sets status options' do
-      argv = %w{-s Joshua}
-      cli = subject.new(argv)
+      cli = subject.new(%w{-s Joshua})
       expect(cli.options[:status]).to eq 'Joshua'
     end
 
     it 'sets force options' do
-      argv = %w{-f Joshua}
-      cli = subject.new(argv)
+      cli = subject.new(%w{-f Joshua})
       expect(cli.options[:force]).to eq 'Joshua'
     end
 
     it 'sets vacation options' do
-      argv = %w{-v Joshua,true}
-      cli = subject.new(argv)
+      cli = subject.new(%w{-v Joshua,true})
       expect(cli.options[:vacation]).to eq ['Joshua', 'true']
     end
 
     it 'sets list options' do
-      argv = %w{-l}
-      cli = subject.new(argv)
+      cli = subject.new(['-l'])
       expect(cli.options[:list]).to eq true
     end
 
     it 'sets auto options' do
-      argv = %w{-a}
-      cli = subject.new(argv)
+      cli = subject.new(['-a'])
       expect(cli.options[:auto]).to eq true
     end
 
-    #
+
     # it 'sets help options' do
-    #   argv = %w{-h}
-    #   cli = subject.new(argv)
+    #   cli = subject.new(['-h'])
     #   expect(cli.options[:auto]).to eq true
     # end
 
@@ -63,4 +103,5 @@ describe Commander::Client do
     # end
 
   end
+
 end
