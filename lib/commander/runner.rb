@@ -16,7 +16,7 @@ module Commander
       @options         = opts
       @options[:force] = opts[:force]
       @selected_commander = opts[:force] || opts[:status] || opts[:vacation]
-      @users = YAML.load_file("#{File.dirname(__FILE__)}/../../config/free.yml")
+      @users = YAML.load_file("#{File.dirname(__FILE__)}/../../config/members.yml")
       # @skip_selection = opts[:force] || opts[:status] || opts[:vacation]
       # [:force, :status, :vacation].map{|k| opts.has_key? k}.any?
       # @skip_selection = opts[:auto]
@@ -49,7 +49,7 @@ module Commander
         evaluate_vacations(name)
         @users[name][:vacations] = @vacations
       end
-      write_to_file('free', @users.to_yaml)
+      write_to_file('members', @users.to_yaml)
     end
 
     # Sets :vacation true if vacation
@@ -99,7 +99,7 @@ module Commander
       users[@selected_commander][:vacation] = false
       users[@selected_commander][:times_commander] = count_up
       users[@selected_commander][:date] = Time.now
-      write_to_file('free', @users.to_yaml)
+      write_to_file('members', @users.to_yaml)
     end
 
     # Manipulates yaml on options[:force]
