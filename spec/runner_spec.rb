@@ -263,7 +263,8 @@ describe Commander::Runner do
     subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
 
     it 'imports trello config' do
-
+      allow(subject).to receive(:import).and_return true
+      subject.import
     end
   end
 

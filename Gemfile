@@ -6,5 +6,5 @@ gem 'simplecov'
 gem 'rubocop'
 gem 'json'
 gem 'ruby-trello'
-
+gem 'webmock'
 gemspec

@@ -3,7 +3,6 @@ require 'commander/trello'
 require 'commander/vacations'
 require 'commander/helpers'
 require 'trello'
-require 'debugger'
 module Commander
 
   CONFIG = YAML.load_file("#{File.dirname(__FILE__)}/../../config/.trello.yml")
