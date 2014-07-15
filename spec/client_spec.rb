@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-
 describe Commander::Client do
 
   subject { Commander::Client }
@@ -29,7 +28,6 @@ describe Commander::Client do
         cli.execute!
       end
     end
-
 
     context 'with list options' do
       let(:cli) { subject.new(%w{-l}) }
@@ -69,9 +67,7 @@ describe Commander::Client do
         cli.execute!
       end
     end
-
   end
-
 
   describe '?extract_options' do
     it 'sets status options' do
@@ -112,7 +108,5 @@ describe Commander::Client do
       expect_any_instance_of(subject).to receive(:exit)
       subject.new(argv)
     end
-
   end
-
 end
