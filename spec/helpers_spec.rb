@@ -7,8 +7,7 @@ describe Commander::Helpers do
   describe '.to_boolean' do
 
     it 'converts string to bool' do
-      expect(subject).to receive(:to_boolean).with(any_args)
-      subject.to_boolean
+      expect(subject.to_boolean('true')).to eq true
     end
   end
 end

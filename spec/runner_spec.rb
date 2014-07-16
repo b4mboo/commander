@@ -29,7 +29,6 @@ describe Commander::Runner do
   end
 
   describe '#run' do
-
     subject { Commander::Runner.new({:vacation=>false, :force=>'a_user', :status=>false, :auto=>true, :list=>false}) }
 
     it 'exectutes #set_commander' do
@@ -110,13 +109,12 @@ describe Commander::Runner do
   end
 
   describe '#show_status' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>false, :status=>true, :auto=>false, :list=>false}) }
+    subject { Commander::Runner.new({:vacation=>false, :force=>false, :status=>'Joshua', :auto=>false, :list=>false}) }
 
     it 'prints out the status' do
-      # expect($stdout).to receive(:puts).with("#{subject.users.first.first} was 3 times Commanding officer of the week.")
-      # expect($stdout).to_not receive(:puts).with("#{subject.users.first.first} is currently on vacation.")
-      # subject.show_status(subject.users.first.first)
-      # # test with yield?
+      expect(STDOUT).to receive(:puts).with("#{subject.options[:status]} was #{subject.users['Joshua'][:times_commander]} times Commanding officer of the week.")
+      expect(STDOUT).to_not receive(:puts).with("#{subject.options[:status]} is currently on vacation.")
+      subject.show_status(subject.options[:status])
     end
 
   end
@@ -227,7 +225,8 @@ describe Commander::Runner do
     subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
 
     it 'writes all the stuff to the yaml file' do
-      # test with yield
+      expect(File).to receive(:open).and_return true
+      File.open
     end
   end
 
@@ -259,8 +258,17 @@ describe Commander::Runner do
     subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
 
     it 'imports trello config' do
-      allow(subject).to receive(:import).and_return true
-      subject.import
+      stub_boards_call
+      expect(subject.import).to be_a_kind_of Commander::TrelloConnection
     end
+  end
+
+  describe '#select_commander' do
+    subject { Commander::Runner.new({:vacation=>false, :force=>false, :status=>false, :auto=>true, :list=>true}) }
+      it 'selects the commander based on yamldata' do
+
+
+      end
+
   end
 end
