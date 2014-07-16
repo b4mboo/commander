@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Commander::VERSION
   spec.authors       = ["jschmid1"]
   spec.email         = ["jschmid@suse.de"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Automatically sets a Commanding officer of the Week. Every Tuesday}
+  spec.description   = %q{fair}
   spec.homepage      = ""
   spec.license       = "MIT"
 
