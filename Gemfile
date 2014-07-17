@@ -12,5 +12,5 @@ group :test do
 end
 
 gem 'json' , '~> 1.7.7'
-gem 'ruby-trello, '~> 1.1.1'
+gem 'ruby-trello' , '~> 1.1.1'
 
