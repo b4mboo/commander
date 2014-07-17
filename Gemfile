@@ -11,6 +11,6 @@ group :test do
   gem 'webmock'
 end
 
-gem 'json'
-gem 'ruby-trello'
+gem 'json' , '~> 1.7.7'
+gem 'ruby-trello, '~> 1.1.1'
 
