@@ -57,7 +57,7 @@ module Commander
     # Check for timespans
     def evaluate_vacations(commander)
       parse_vacations.each do |check|
-        set_vacation_flag(commander, 'true') if (check[0]..check[1]).cover?(Date.today) || check[0].cover?(Date.today)
+        set_vacation_flag(commander, 'true') if (check[0]..check[1]).cover?(Date.today) || (check[0]..check[0]).cover?(Date.today)
       end
     end
 
