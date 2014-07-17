@@ -1,6 +1,12 @@
 # Commander
-
-TODO: Write a gem description
+Usage: commander [options] ...
+    -v, --vacation name,bool         <NAME>,true/false(bool) comma is important
+    -f, --force name                 Set COMM manually <NAME>
+    -s, --status name                Inspect history and status of <NAME>
+    -a, --auto                       Runs with default settings
+    -l, --list                       Lists all available Members.
+    -h, --help                       Display this screen
+    -u, --version                    Print programs version
 
 ## Installation
 
@@ -14,11 +20,11 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install commander
+    $ gem install scc-commander
 
 ## Usage
 
-TODO: Write usage instructions here
+See -h
 
 ## Contributing
 

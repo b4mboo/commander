@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'commander/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "commander"
+  spec.name          = "scc-commander"
   spec.version       = Commander::VERSION
   spec.authors       = ["jschmid1"]
   spec.email         = ["jschmid@suse.de"]
@@ -18,6 +18,6 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "bundler", "~> 1.6"
-  spec.add_development_dependency "rake"
+  spec.add_runtime_dependency 'ruby-trello', '=1.1.1'
+  spec.add_runtime_dependency 'json', '=1.7.7'
 end

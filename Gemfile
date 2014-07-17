@@ -1,10 +1,16 @@
 source 'https://rubygems.org'
 
-gem 'rspec'
-gem 'byebug'
-gem 'simplecov'
-gem 'rubocop'
+gemspec
+
+group :test do
+  gem 'rspec'
+  gem 'rake'
+  gem 'rspec'
+  gem 'simplecov'
+  gem 'rubocop'
+  gem 'webmock'
+end
+
 gem 'json'
 gem 'ruby-trello'
-gem 'webmock'
-gemspec
+
