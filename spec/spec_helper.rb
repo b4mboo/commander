@@ -14,7 +14,6 @@ end
 require 'webmock/rspec'
 require 'support/request_stubbing'
 require 'commander'
-require 'byebug'
 require 'rspec'
 require 'trello'
 require 'commander/trello'
