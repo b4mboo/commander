@@ -1,11 +1,18 @@
 # Commander
 Usage: commander [options] ...
+
     -v, --vacation name,bool         <NAME>,true/false(bool) comma is important
+
     -f, --force name                 Set COMM manually <NAME>
+    
     -s, --status name                Inspect history and status of <NAME>
+    
     -a, --auto                       Runs with default settings
+    
     -l, --list                       Lists all available Members.
+    
     -h, --help                       Display this screen
+    
     -u, --version                    Print programs version
 
 ## Installation
