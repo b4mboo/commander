@@ -19,22 +19,21 @@ module Commander
       @users = YAML.load_file("#{File.dirname(__FILE__)}/../../config/members.yml")
     end
 
-    # Call for options
-    def run
-      set_commander
-    end
-
     # Steps
     def set_commander
       import
       find_card
       update_vacations
       select_commander if @options[:auto]
-      forced if @options[:force]
+      write_attributes if @options[:force]
+      manipulate_trello
+      puts "Chose: #{@selected_commander}"
+    end
+
+    def manipulate_trello
       comment_on_card
       delete_assigned_members
       add_member_to_card
-      puts "Chose: #{@selected_commander}" # debug
     end
 
     # Updates all vacations
@@ -57,7 +56,10 @@ module Commander
     # Check for timespans
     def evaluate_vacations(commander)
       parse_vacations.each do |check|
-        set_vacation_flag(commander, 'true') if (check[0]..check[1]).cover?(Date.today) || (check[0]..check[0]).cover?(Date.today)
+        check[1] = check[0] unless check[1] # Rewrite if statement with catch to prevent this error?
+        if (check[0]..check[1]).cover?(Date.today)
+          set_vacation_flag(commander, 'true')
+        end
       end
     end
 
@@ -95,11 +97,6 @@ module Commander
       users[@selected_commander][:times_commander] = count_up
       users[@selected_commander][:date] = Time.now
       write_to_file('members', @users.to_yaml)
-    end
-
-    # Manipulates yaml on options[:force]
-    def forced
-      write_attributes
     end
 
     # Delete assigned commander from Trello Card
