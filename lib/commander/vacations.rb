@@ -17,7 +17,7 @@ module Commander
           end
           dates = []
           l.split(" ").each do |date|
-            unless date =~ /2014/
+            unless date =~ /#{Time.now.year}/
               next
             end
             dates.push(date)
@@ -28,7 +28,6 @@ module Commander
             when 2
               vacations.push("#{dates[0]} - #{dates[1]}")
             else
-              STDERR.puts "#{dates.size} dates for '(#{username})' #{l}"
           end
         end
       end
