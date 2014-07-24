@@ -14,7 +14,7 @@ describe Commander::Client do
 
       it 'should run with default settings' do
         expect(Commander::Runner).to receive(:new).with(cli.options).and_return Commander::Runner.new(cli.options)
-        expect_any_instance_of(Commander::Runner).to receive(:run)
+        expect_any_instance_of(Commander::Runner).to receive(:set_commander)
         cli.execute!
       end
     end
@@ -24,7 +24,7 @@ describe Commander::Client do
 
       it 'should run with force settings' do
         expect(Commander::Runner).to receive(:new).with(cli.options).and_return Commander::Runner.new(cli.options)
-        expect_any_instance_of(Commander::Runner).to receive(:run)
+        expect_any_instance_of(Commander::Runner).to receive(:set_commander)
         cli.execute!
       end
     end

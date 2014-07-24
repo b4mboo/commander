@@ -28,15 +28,6 @@ describe Commander::Runner do
     end
   end
 
-  describe '#run' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'a_user', :status=>false, :auto=>true, :list=>false}) }
-
-    it 'exectutes #set_commander' do
-      expect(subject).to receive(:set_commander)
-      subject.run
-    end
-  end
-
   describe '#set_commander' do
     subject { Commander::Runner.new({:vacation=>false, :force=>false, :status=>false, :auto=>true, :list=>false}) }
 
@@ -45,11 +36,20 @@ describe Commander::Runner do
       expect(subject).to receive(:find_card)
       expect(subject).to receive(:update_vacations)
       expect(subject).to receive(:select_commander)
-      expect(subject).not_to receive(:forced)
+      expect(subject).to receive(:manipulate_trello)
+      expect(subject).not_to receive(:write_attributes)
+      subject.set_commander
+    end
+  end
+
+  describe '#manipulate_trello' do
+    subject { Commander::Runner.new({:vacation=>false, :force=>false, :status=>false, :auto=>true, :list=>false}) }
+
+    it 'holds trello manipulation methods' do
       expect(subject).to receive(:comment_on_card)
       expect(subject).to receive(:delete_assigned_members)
       expect(subject).to receive(:add_member_to_card)
-      subject.set_commander
+      subject.manipulate_trello
     end
   end
 
@@ -61,10 +61,8 @@ describe Commander::Runner do
       expect(subject).to receive(:find_card)
       expect(subject).to receive(:update_vacations)
       expect(subject).not_to receive(:select_commander)
-      expect(subject).to receive(:forced)
-      expect(subject).to receive(:comment_on_card)
-      expect(subject).to receive(:delete_assigned_members)
-      expect(subject).to receive(:add_member_to_card)
+      expect(subject).to receive(:write_attributes)
+      expect(subject).to receive(:manipulate_trello)
       subject.set_commander
     end
   end
@@ -133,14 +131,6 @@ describe Commander::Runner do
     end
   end
 
-  describe '#forced' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
-
-    it 'calls write_attributes if options[:forced]' do
-      expect(subject).to receive(:write_attributes)
-      subject.forced
-    end
-  end
 
   describe '#delete_assigned_members' do
     subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
