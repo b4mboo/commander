@@ -16,7 +16,7 @@ module Commander
       runner = Commander::Runner
       if @options[:force]
         puts 'Forcing ..'
-        runner.new(@options).run
+        runner.new(@options).set_commander
       elsif @options[:status]
         puts 'Status output ..'
         runner.new(@options).show_status(@options[:status])
@@ -25,7 +25,7 @@ module Commander
         runner.new(@options).set_vacation_flag(@options[:vacation][0], @options[:vacation][1])
       elsif @options[:auto]
         puts 'Running with default settings..'
-        runner.new(@options).run
+        runner.new(@options).set_commander
       elsif @options[:list]
         puts 'Display all Members: '
         runner.new(@options).list_all_members
