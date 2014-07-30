@@ -136,7 +136,7 @@ module Commander
 
     # Writes to yaml
     def write_to_file(filename, content)
-      File.open("#{File.dirname(__FILE__)}/../../config/#{filename}.yml", 'w') do |f|
+      File.open("#{File.join(Dir.home)}/.config/happy-commander/#{filename}.yml", 'w') do |f|
         f.write(content)
       end
     end

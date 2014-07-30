@@ -96,7 +96,7 @@ module Commander
           exit('provide proper input')
       end
 
-      puts ("#{concat_cron_syntax}      #{%x[which commander].chomp} -a").red
+      puts ("#{concat_cron_syntax}      #{%x[which commander].chomp || %x[which commander2.0].chomp} -a").red
       puts 'put this in your cron'
       puts 'edit it with crontab -e'
       write_to_file('.trello', @conf.to_yaml)
