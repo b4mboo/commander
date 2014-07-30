@@ -34,6 +34,7 @@ module Commander
       puts "Chose: #{@selected_commander}"
     end
 
+    # All Trello actions
     def manipulate_trello
       comment_on_card
       delete_assigned_members
@@ -150,7 +151,6 @@ module Commander
       @comment_string = "@#{@users[@selected_commander][:trello_name]} is your commanding officer for the next 7 Days."
       @trello.comment_on_card(@comment_string, @card)
     end
-
 
   end
 end

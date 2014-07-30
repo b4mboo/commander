@@ -15,35 +15,35 @@ module Commander
     end
 
     def self.configure
-      # system('clear')
-      # puts 'Provide your Trello Board ID'.green
-      # puts 'if you dont know where to find it visit your board '
-      # puts 'with your browser and check the url '
-      # puts 'https://trello.com/b/YOURBOARDID/boardname etc..'
-      # printf '>>'
-      # @conf['board_id'] = get_user_input
-      # system('clear')
-      #
-      # puts 'Provide your Trello consumer key'.green
-      # puts 'you can generate this key on '
-      # puts 'https://trello.com/1/appKey/generate'
-      # printf '>>'
-      # @conf['consumerkey'] = get_user_input
-      # system('clear')
-      #
-      # puts 'Provide your Trello consumer secret'.green
-      # puts 'you can generate this key on '
-      # puts 'https://trello.com/1/appKey/generate'
-      # printf '>>'
-      # @conf['consumersecret'] = get_user_input
-      # system('clear')
-      #
-      #
-      # puts 'finally provide the generated token '.green
-      # puts 'which you can get here'
-      # puts 'https://trello.com/docs/gettingstarted/index.html#getting-a-token-from-a-user'
-      # printf '>>'
-      # @conf['oauthtoken'] = get_user_input
+      system('clear')
+      puts 'Provide your Trello Board ID'.green
+      puts 'if you dont know where to find it visit your board '
+      puts 'with your browser and check the url '
+      puts 'https://trello.com/b/YOURBOARDID/boardname etc..'
+      printf '>>'
+      @conf['board_id'] = get_user_input
+      system('clear')
+
+      puts 'Provide your Trello consumer key'.green
+      puts 'you can generate this key on '
+      puts 'https://trello.com/1/appKey/generate'
+      printf '>>'
+      @conf['consumerkey'] = get_user_input
+      system('clear')
+
+      puts 'Provide your Trello consumer secret'.green
+      puts 'you can generate this key on '
+      puts 'https://trello.com/1/appKey/generate'
+      printf '>>'
+      @conf['consumersecret'] = get_user_input
+      system('clear')
+
+
+      puts 'finally provide the generated token '.green
+      puts 'which you can get here'
+      puts 'https://trello.com/docs/gettingstarted/index.html#getting-a-token-from-a-user'
+      printf '>>'
+      @conf['oauthtoken'] = get_user_input
       system('clear')
 
       puts 'Specify the card id (comments and assignments on this card)'.green
@@ -95,11 +95,6 @@ module Commander
           exit('provide proper input')
       end
 
-      # puts 'monthly?'.green
-      # puts 'yes/no'
-      # printf '>>'
-      # @month = get_user_input
-      # system('clear')
       puts ("#{concat_cron_syntax}      #{%x[which commander].chomp} -a").red
       puts 'put this in your cron'
       puts 'edit it with crontab -e'
@@ -107,17 +102,7 @@ module Commander
 
     end
 
-    # def self.monthly?(month)
-    #   if month == 'yes' || 'y' || 'ja'
-    #     true
-    #   end
-    #   false
-    # end
-
     def self.concat_cron_syntax
-      # if monthly?(@month)
-      #   "0 0 0 * 0"
-      # end
       "0 #{@hour} 0 0 #{@cron_day}"
     end
 
