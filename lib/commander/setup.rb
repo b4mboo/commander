@@ -1,4 +1,3 @@
-require 'debugger'
 require 'yaml'
 require 'colorize'
 require 'fileutils'
@@ -42,6 +41,8 @@ module Commander
       puts 'finally provide the generated token '.green
       puts 'which you can get here'
       puts 'https://trello.com/docs/gettingstarted/index.html#getting-a-token-from-a-user'
+      puts 'or'
+      puts "https://trello.com/1/authorize?key=#{@conf['consumerkey']}&name=happy-commander&expiration=never&response_type=token&scope=read,write"
       printf '>>'
       @conf['oauthtoken'] = get_user_input
       system('clear')

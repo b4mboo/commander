@@ -121,7 +121,7 @@ module Commander
 
     # Finds the Commander Card on Trello
     def find_card
-      @card = @trello.find_card_by_id(Commander::Config['card_id']) # replace when move to real board
+      @card = @trello.find_card_by_id(CONFIG['card_id']) # replace when move to real board
     end
 
     # Finds the member on Trello
