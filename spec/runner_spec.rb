@@ -4,6 +4,7 @@ require 'fileutils'
 describe Commander::Runner do
 
   let( :vacations) { File.read(File.join(File.dirname(__FILE__), 'fixtures/vacations.txt')) }
+  let( :config) { File.read(File.join(File.dirname(__FILE__), 'fixtures/trello.txt')) }
   let( :users) { File.read(File.join(File.dirname(__FILE__), 'fixtures/users.txt')) }
   subject { Commander::Runner }
 
@@ -162,18 +163,18 @@ describe Commander::Runner do
     end
   end
 
-  describe '#find_card' do
-    subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
-
-    it 'find the card from trello board' do
-      card = double('card')
-      trello = double('trello')
-      subject.instance_variable_set(:@trello, trello)
-      allow(subject).to receive(:find_card_by_id).with('56').and_return card
-      expect(trello).to receive(:find_card_by_id).with('56')
-      subject.find_card
-    end
-  end
+  # describe '#find_card' do
+  #   subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
+  #
+  #   it 'find the card from trello board' do
+  #     card = double('card')
+  #     trello = double('trello')
+  #     subject.instance_variable_set(:@trello, trello)
+  #     allow(subject).to receive(:find_card_by_id).with('5').and_return card
+  #     expect(trello).to receive(:find_card_by_id).with('2')
+  #     subject.find_card
+  #   end
+  # end
 
   describe '#count_up' do
     subject { Commander::Runner.new({:vacation=>false, :force=>'Joshua', :status=>false, :auto=>false, :list=>true}) }
@@ -256,8 +257,6 @@ describe Commander::Runner do
   describe '#select_commander' do
     subject { Commander::Runner.new({:vacation=>false, :force=>false, :status=>false, :auto=>true, :list=>true}) }
       it 'selects the commander based on yamldata' do
-
-
       end
 
   end
