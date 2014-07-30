@@ -3,9 +3,13 @@ require 'commander/trello'
 require 'commander/vacations'
 require 'commander/helpers'
 require 'trello'
+require 'fileutils'
 module Commander
 
-  CONFIG = YAML.load_file("#{File.dirname(__FILE__)}/../../config/.trello.yml")
+  FileUtils.mkdir_p("#{File.join(ENV['HOME'])}/.config/happy-commander/") unless Dir.exists?("#{ENV['HOME']}/.config/happy-commander")
+  FileUtils.cp ("#{File.dirname(__FILE__)}/../../config/.trello.yml"), ("#{File.join(Dir.home)}" + '/.config/happy-commander/') unless File.exists?(("#{File.join(Dir.home)}" + '/.config/happy-commander/.trello.yml'))
+  FileUtils.cp ("#{File.dirname(__FILE__)}/../../config/members.yml"), ("#{File.join(Dir.home)}" + '/.config/happy-commander/') unless File.exists?(("#{File.join(Dir.home)}" + '/.config/happy-commander/members.yml'))
+  CONFIG = YAML.load_file("#{File.join(ENV['HOME'])}/.config/happy-commander/.trello.yml")
 
   class Runner
 
@@ -16,7 +20,7 @@ module Commander
       @options         = opts
       @options[:force] = opts[:force]
       @selected_commander = opts[:force] || opts[:status] || opts[:vacation]
-      @users = YAML.load_file("#{File.dirname(__FILE__)}/../../config/members.yml")
+      @users = YAML.load_file("#{File.join(ENV['HOME'])}/.config/happy-commander/members.yml")
     end
 
     # Steps
@@ -116,7 +120,7 @@ module Commander
 
     # Finds the Commander Card on Trello
     def find_card
-      @card = @trello.find_card_by_id('56') # replace when move to real board
+      @card = @trello.find_card_by_id(Commander::Config['card_id']) # replace when move to real board
     end
 
     # Finds the member on Trello
@@ -146,5 +150,7 @@ module Commander
       @comment_string = "@#{@users[@selected_commander][:trello_name]} is your commanding officer for the next 7 Days."
       @trello.comment_on_card(@comment_string, @card)
     end
+
+
   end
 end

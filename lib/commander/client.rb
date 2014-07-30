@@ -1,5 +1,6 @@
 require 'optparse'
 require 'commander/runner'
+require 'commander/setup'
 module Commander
   # CLI with options
   class Client
@@ -29,6 +30,9 @@ module Commander
       elsif @options[:list]
         puts 'Display all Members: '
         runner.new(@options).list_all_members
+      elsif @options[:setup]
+        puts 'Running setup..'
+        Commander::Setup.configure
       else
         puts @optparse
         exit
@@ -63,6 +67,11 @@ module Commander
         @options[:list] = false
         opts.on( '-l', '--list', 'Lists all available Members.' ) do |opt|
           @options[:list] = opt
+        end
+
+        @options[:setup] = false
+        opts.on( '-x' ,'--setup', 'Runs setup for your environment.' ) do |opt|
+          @options[:setup] = opt
         end
 
         opts.on( '-h', '--help', 'Display this screen' ) do

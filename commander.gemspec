@@ -4,12 +4,12 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'commander/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "scc-commander"
+  spec.name          = "happy-commander"
   spec.version       = Commander::VERSION
   spec.authors       = ["jschmid1"]
   spec.email         = ["jschmid@suse.de"]
   spec.summary       = %q{Automatically sets a Commanding officer of the Week. Every Tuesday}
-  spec.description   = %q{fair}
+  spec.description   = %q{easy, fair, whatever}
   spec.homepage      = ""
   spec.license       = "MIT"
 
@@ -20,4 +20,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'ruby-trello', '=1.1.1'
   spec.add_runtime_dependency 'json', '=1.7.7'
+  spec.add_runtime_dependency 'colorize', '=0.7.3'
 end
