@@ -1,8 +1,9 @@
 PATH
   remote: .
   specs:
-    scc-commander (0.0.1)
-      json
+    happy-commander (0.0.5)
+      colorize (= 0.7.3)
+      json (= 1.7.7)
       ruby-trello (= 1.1.1)
 
 GEM
@@ -20,12 +21,13 @@ GEM
     addressable (2.3.6)
     ast (2.0.0)
     builder (3.2.2)
+    colorize (0.7.3)
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
     diff-lcs (1.2.5)
     docile (1.1.5)
     i18n (0.6.9)
-    json (1.8.1)
+    json (1.7.7)
     mime-types (2.3)
     minitest (5.3.5)
     multi_json (1.10.1)
@@ -35,6 +37,7 @@ GEM
       slop (~> 3.4, >= 3.4.5)
     powerpack (0.0.9)
     rainbow (2.0.0)
+    rake (10.3.2)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rspec (3.0.0)
@@ -80,10 +83,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  json
+  happy-commander!
+  json (~> 1.7.7)
+  rake
   rspec
   rubocop
-  ruby-trello
-  scc-commander!
+  ruby-trello (~> 1.1.1)
   simplecov
   webmock
