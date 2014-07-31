@@ -9,6 +9,7 @@ end
 
 RSpec.configure do |c|
   c.order = :random
+  c.before { allow($stdout).to receive(:puts) }
 end
 
 require 'webmock/rspec'
@@ -20,3 +21,4 @@ require 'commander/trello'
 require 'commander/runner'
 require 'commander/client'
 require 'commander/version'
+
