@@ -187,25 +187,11 @@ module Commander
     end
 
     def self.evaluate_cron_syntax_day(day)
-      case day
-        when 'monday'
-          puts 'selected: monday'
-          @cron_day = 1
-        when 'tuesday'
-          puts 'selected: tuesday'
-          @cron_day = 2
-        when 'wednesday'
-          puts 'selected: wednesday'
-          @cron_day = 3
-        when 'thursday'
-          puts 'selected: thursday'
-          @cron_day = 4
-        when 'friday'
-          puts 'selected: friday'
-          @cron_day = 5
-        else
-          puts 'typo?'
-      end
+      weekdays = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
+      # FIXME: Handle typos gracefully.
+      puts 'typo?' and exit unless weekdays.include?(day)
+      puts "selected: #{day}"
+      @cron_day = weekdays.index(day)
     end
 
     def self.write_to_file(filename, content)
