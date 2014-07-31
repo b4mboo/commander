@@ -15,7 +15,6 @@
 Gemfile.lock
 rubocop.yml
 config/
-.rspec
 
 
 ## Specific to RubyMotion:
