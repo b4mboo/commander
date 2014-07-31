@@ -14,24 +14,28 @@ describe Commander::Setup do
 
   end
 
-  describe '.evaluate_cron_syntax_day' do
+  describe '.pick_cron_day' do
 
     it 'translates literal day names into integers' do
-      expect(subject.evaluate_cron_syntax_day('Tuesday')).to eq(2)
+      expect_user_input 'Tuesday'
+      expect(subject.pick_cron_day).to eq(2)
     end
 
     it 'expects valid weekdays' do
+      expect_user_input 'Invalid'
       expect(subject).to receive(:puts).with(include 'Not a valid weekday')
       expect(subject).to receive(:puts).with(include 'Valid options are')
-      expect(subject.evaluate_cron_syntax_day('Fussball')).to be_nil
+      expect(subject.pick_cron_day).to be_nil
     end
 
     it 'translates "Sunday" into the integer 0' do
-      expect(subject.evaluate_cron_syntax_day('Sunday')).to eq(0)
+      expect_user_input 'Sunday'
+      expect(subject.pick_cron_day).to eq(0)
     end
 
     it 'translates "Saturday" into the integer 6' do
-      expect(subject.evaluate_cron_syntax_day('Saturday')).to eq(6)
+      expect_user_input 'Saturday'
+      expect(subject.pick_cron_day).to eq(6)
     end
 
   end

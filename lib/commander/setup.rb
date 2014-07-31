@@ -76,8 +76,7 @@ module Commander
           puts 'Chose wirtten language:'
           puts 'e.g. monday, tuesday, ...'
           puts '>>'
-          day = get_user_input
-          evaluate_cron_syntax_day(day)
+          pick_cron_day
           puts 'time..'
           puts 'e.g. 11, 21, 24, 8, 3'
           time = get_user_input
@@ -190,7 +189,8 @@ module Commander
 
     end
 
-    def self.evaluate_cron_syntax_day(day)
+    def self.pick_cron_day
+      day = get_user_input
       weekdays = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
       unless weekdays.include?(day)
         raise InvalidInputException, "Not a valid weekday: '#{day}'"
