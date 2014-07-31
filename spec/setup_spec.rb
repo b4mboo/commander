@@ -21,11 +21,10 @@ describe Commander::Setup do
       expect(subject.pick_cron_day).to eq(2)
     end
 
-    it 'expects valid weekdays' do
+    it 'asks to correct invalid inputs' do
       expect_user_input 'Invalid'
-      expect(subject).to receive(:puts).with(include 'Not a valid weekday')
-      expect(subject).to receive(:puts).with(include 'Valid options are')
-      expect(subject.pick_cron_day).to be_nil
+      expect_user_input 'Sunday'
+      expect(subject.pick_cron_day).to eq(0)
     end
 
     it 'translates "Sunday" into the integer 0' do

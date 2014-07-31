@@ -200,6 +200,7 @@ module Commander
     rescue InvalidInputException => e
       puts e.message
       puts "Valid options are: #{weekdays}"
+      retry
     end
 
     def self.write_to_file(filename, content)
