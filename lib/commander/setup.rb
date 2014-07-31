@@ -185,10 +185,6 @@ module Commander
       end
     end
 
-    class InvalidInputException < Exception
-
-    end
-
     def self.pick_cron_day
       day = get_user_input
       weekdays = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
