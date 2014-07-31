@@ -73,8 +73,8 @@ module Commander
       system('clear')
       case choice.to_i
         when 1
-          puts 'Chose wirtten language:'
-          puts 'e.g. monday, tuesday, ...'
+          puts 'Chose written language:'
+          puts 'e.g. Monday, Tuesday, ...'
           puts '>>'
           pick_cron_day
           puts 'time..'
