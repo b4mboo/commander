@@ -186,12 +186,20 @@ module Commander
       end
     end
 
+    class InvalidInputException < Exception
+
+    end
+
     def self.evaluate_cron_syntax_day(day)
       weekdays = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
-      # FIXME: Handle typos gracefully.
-      puts 'typo?' and exit unless weekdays.include?(day)
+      unless weekdays.include?(day)
+        raise InvalidInputException, "Not a valid weekday: '#{day}'"
+      end
       puts "selected: #{day}"
       @cron_day = weekdays.index(day)
+    rescue InvalidInputException => e
+      puts e.message
+      puts "Valid options are: #{weekdays}"
     end
 
     def self.write_to_file(filename, content)

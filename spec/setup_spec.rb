@@ -21,6 +21,8 @@ describe Commander::Setup do
     end
 
     it 'expects valid weekdays' do
+      expect(subject).to receive(:puts).with(include 'Not a valid weekday')
+      expect(subject).to receive(:puts).with(include 'Valid options are')
       expect(subject.evaluate_cron_syntax_day('Fussball')).to be_nil
     end
 
